@@ -1,5 +1,5 @@
 const response = (stastuscode, data, message, res) => {
-    res.json(stastuscode, [
+    res.status(stastuscode).json([
 
         {
             playload: data,

@@ -1,9 +1,9 @@
 const express = require('express');
 const port = 8000;
 const app = express();
-const db = require("./connect");
+const db = require("./databases/connect");
 const bodyparser = require('body-parser')
-const response = require("./response")
+const response = require("./response/response")
 const routes = require('./routes/routes')
 
 
@@ -19,13 +19,20 @@ app.get("/api_ket_pelanggaran", routes)
 
 
 
-app.put("/api_pelanggaran", routes)
+
+
 
 app.get("/api_pelanggaran", routes)
 app.post("/api_pelanggaran", routes)
+app.put("/api_pelanggaran", routes)
+
+
 
 app.get("/api_reward", routes)
 app.post("/api_reward", routes)
+app.put("/api_reward", routes)
+app.delete("/api_reward", routes)
+
 
 
 
