@@ -69,7 +69,7 @@ routes.delete('/api_reward', (req, res) => {
 
 routes.get('/api_pelanggaran', (req, res) => {
     db.query("SELECT * FROM tbl_pelanggaran", (error, result) => {
-        response(200, result, "GET ALL tabel reward", res)
+        response(200, result, "GET ALL tabel pelanggaran", res)
     })
 })
 routes.post('/api_pelanggaran', (req, res) => {
