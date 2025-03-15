@@ -11,12 +11,12 @@ routes.get('/api_siswa', (req, res) => {
 })
 routes.get('/api_ket_reward', (req, res) => {
     db.query("SELECT * FROM tbl_ket_reward", (error, result) => {
-        res.send(result);
+        response(200, result, "GET ALL tabel ket_reward", res)
     })
 })
 routes.get('/api_ket_pelanggaran', (req, res) => {
     db.query("SELECT * FROM tbl_ket_pelanggaran", (error, result) => {
-        res.send(result);
+        response(200, result, "GET ALL tabel ket_pelanggaran", res)
     })
 })
 
@@ -24,13 +24,12 @@ routes.get('/api_ket_pelanggaran', (req, res) => {
 
 routes.put('/api_reward', (req, res) => {
     const { id, id_name, id_reward } = req.body
-    // const sql = `UPDATE tbl_reward SET id_name = '${id_name}', id_reward = '${id_reward}' WHERE id = ${id}`
 
     db.query(`UPDATE tbl_reward SET id_name = '${id_name}', id_reward = '${id_reward}' WHERE id = ${id}`, (err, result) => {
         console.log(result)
     })
-    response(200,"test","test",res)
-    
+    response(200, "test", "test", res)
+
 })
 
 routes.get('/api_reward', (req, res) => {
@@ -53,14 +52,14 @@ routes.post('/api_reward', (req, res) => {
 })
 
 
-routes.delete('/api_reward', (req, res) =>  {
-    const {id} = req.body
+routes.delete('/api_reward', (req, res) => {
+    const { id } = req.body
     const sql = `DELETE FROM tbl_reward WHERE id = ${id}`
-    db.query (sql, (err, fields) => {
-     if (err) response(500, "INVALID ", "EROR", res)
+    db.query(sql, (err, fields) => {
+        if (err) response(500, "INVALID ", "EROR", res)
         console.log(fields)
     })
-      response(200, "DELETE TEST", "THIS DELETE DATA", res)
+    response(200, "DELETE TEST", "THIS DELETE DATA", res)
 })
 
 
@@ -95,7 +94,7 @@ routes.put('/api_pelanggaran', (req, res) => {
     db.query(`UPDATE tbl_pelanggaran SET id_name = '${id_name}', id_pelanggaran = '${id_pelanggaran}' WHERE id = ${id}`, (err, result) => {
         console.log(result)
     })
-    response(200,"test","test",res)
+    response(200, "test", "test", res)
 })
 
 
