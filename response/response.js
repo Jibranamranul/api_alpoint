@@ -15,4 +15,4 @@ const response = (stastuscode, data, message, res) => {
     ])
 }
 
-module.exports = response
+module.exports = response;

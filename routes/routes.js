@@ -4,7 +4,15 @@ const db = require('../databases/connect')
 const response = require('../response/response')
 
 
+routes.get('/api_users', (req, res) => {
+    db.query("SELECT * FROM tbl_user", (error, result) => {
+        response(200, result, "GET ALL tabel users", res)
+    })
+})
+
+
 routes.get('/api_siswa', (req, res) => {
+    // response(200, result, "GET ALL tabel siswa", res)
     db.query("SELECT * FROM tbl_siswa", (error, result) => {
         response(200, result, "GET ALL tabel siswa", res)
     })
@@ -63,10 +71,6 @@ routes.delete('/api_reward', (req, res) => {
 })
 
 
-
-
-
-
 routes.get('/api_pelanggaran', (req, res) => {
     db.query("SELECT * FROM tbl_pelanggaran", (error, result) => {
         response(200, result, "GET ALL tabel pelanggaran", res)
@@ -96,48 +100,5 @@ routes.put('/api_pelanggaran', (req, res) => {
     })
     response(200, "test", "test", res)
 })
-
-
-// routes.get("/tbl_kategori_reward/:id", (req, res) => {
-//     const id = req.params.id
-//     const sql = `SELECT * FROM tbl_kategori_reward WHERE id = $ {id}`
-//     db.query(sql, (err, fields) => {
-//         if (err) throw err
-//         response(200, fields, "THIS IS TBL ", res)
-//         response(200, `spesifik tbl_kategori_reward by id ${id}`, "get detail tbl", res)
-//     })
-// })
-
-// routes.get("/test", (req, res) => {
-//     db.query("SELECT * FROM tbl_kategori_reward", (err, result) => {
-//         console.log(result);
-//         res.send(result);
-//     })
-// })
-
-// routes.post("/tbl_kategori_reward", (req, res) => {
-// const { kategori } = req.body
-
-// console.log(req.body)
-// const sql = `INSERT INTO tbl_kategori_reward (kategori) VALUES ('${kategori}')`
-// db.query(sql, (err, fields) => {
-//     if (err) throw err
-//     if (fields.affectedRows) { console.log("data masuk") }
-//     else { console.log("gak masuk") }
-// })
-// res.send("ok")
-// // response(200, "THIS IS POST", "message", res)
-// })
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = routes;

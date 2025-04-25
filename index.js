@@ -1,13 +1,19 @@
 const express = require('express');
 const port = 8000;
 const app = express();
-const db = require("./databases/connect");
 const bodyparser = require('body-parser')
-const response = require("./response/response")
+const cors = require("cors");
 const routes = require('./routes/routes')
+const response = require('./response/response');
 
+app.use(bodyparser.json());
+app.use(cors());
 
-app.use(bodyparser.json())
+app.get("/", (req, res) => {
+    res.send("Hello World!")
+})
+
+app.get("/api_users", routes)
 
 app.get("/api_siswa", routes)
 
