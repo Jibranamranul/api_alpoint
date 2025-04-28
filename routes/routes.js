@@ -10,18 +10,37 @@ routes.get('/api_users', (req, res) => {
     })
 })
 
-
 routes.get('/api_siswa', (req, res) => {
     // response(200, result, "GET ALL tabel siswa", res)
-    db.query("SELECT * FROM tbl_siswa", (error, result) => {
+    db.query("SELECT * FROM tbl_siswa ORDER BY kelas desc;", (error, result) => {
         response(200, result, "GET ALL tabel siswa", res)
     })
 })
+
+routes.get('/selectSiswaByClasses', (req, res) => {
+    db.query(`SELECT * FROM tbl_siswa where kelas = "${req.query.kelas}"`, (error, result) => {
+        response(200, result, "GET tabel siswa by kelas", res)
+    })
+})
+
 routes.get('/api_ket_reward', (req, res) => {
     db.query("SELECT * FROM tbl_ket_reward", (error, result) => {
         response(200, result, "GET ALL tabel ket_reward", res)
     })
 })
+
+routes.get('/api_selectRewardByIdSiswa', (req, res) => {
+    sql = `SELECT r.id, s.nama, kr.name, kr.score
+    FROM tbl_reward r
+    JOIN tbl_siswa s ON r.id_name = s.id
+    JOIN tbl_ket_reward kr ON r.id_reward = kr.id
+    WHERE id_name = ${req.query.id_name}`
+
+    db.query(sql, (error, result) => {
+        response(200, result, "GET tabel reward by id siswa", res)
+    })
+})
+
 routes.get('/api_ket_pelanggaran', (req, res) => {
     db.query("SELECT * FROM tbl_ket_pelanggaran", (error, result) => {
         response(200, result, "GET ALL tabel ket_pelanggaran", res)

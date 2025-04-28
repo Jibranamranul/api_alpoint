@@ -16,16 +16,13 @@ app.get("/", (req, res) => {
 app.get("/api_users", routes)
 
 app.get("/api_siswa", routes)
+app.get("/selectSiswaByClasses", routes)
 
 
 app.get("/api_ket_reward", routes)
-
+app.get("/api_selectRewardByIdSiswa", routes)
 
 app.get("/api_ket_pelanggaran", routes)
-
-
-
-
 
 
 app.get("/api_pelanggaran", routes)
