@@ -1,8 +1,7 @@
 const response = (stastuscode, data, message, res) => {
-    res.status(stastuscode).json([
-
+    res.status(stastuscode).json(
         {
-            playload: data,
+            payload: data,
             message,
             info: {
                 seed: "",
@@ -12,7 +11,7 @@ const response = (stastuscode, data, message, res) => {
 
         }
 
-    ])
+    )
 }
 
 module.exports = response;
