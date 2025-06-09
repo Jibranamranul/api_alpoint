@@ -13,15 +13,23 @@ app.get("/", (req, res) => {
     res.send("Hello World!")
 })
 
+app.post("/register", routes)
+
+app.post("/login", routes)
+
 app.get("/api_users", routes)
 
 app.get("/api_siswa", routes)
 app.get("/selectSiswaByClasses", routes)
 
-
+app.get("/api_kategori_reward", routes)
 app.get("/api_ket_reward", routes)
-app.get("/api_selectRewardByIdSiswa", routes)
 
+app.get("/api_selectRewardBySiswa", routes)
+app.get("/api_selectPelanggaranBySiswa", routes)
+
+
+app.get("/api_kategori_pelanggaran", routes)
 app.get("/api_ket_pelanggaran", routes)
 
 
