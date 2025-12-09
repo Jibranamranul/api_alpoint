@@ -33,6 +33,7 @@ app.get("/api_kategori_pelanggaran", routes)
 app.get("/api_ket_pelanggaran", routes)
 
 
+
 app.get("/api_pelanggaran", routes)
 app.post("/api_pelanggaran", routes)
 app.put("/api_pelanggaran", routes)
