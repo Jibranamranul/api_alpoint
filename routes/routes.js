@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const response = require('../response/response')
 
+const SECRET_KEY = "kode_rahasia_pesantren_123";
+
 
 routes.post("/register", (req, res) => {
     const {name, id_posisi, id_account,password} = req.body;
@@ -16,31 +18,72 @@ routes.post("/register", (req, res) => {
 
 
 
-routes.post("/login", (req, res) => {
-    const { username, password } = req.body
+routes.post('/login', (req, res) => {
+    const { username, password } = req.body;
 
-    db.query(`SELECT * FROM tbl_user WHERE name = ? AND password = ?`, [username, password], (err, result) => {
+    // Cari user berdasarkan username dan password
+    const query = "SELECT * FROM tbl_user WHERE name = ? AND password = ?";
+    
+    db.query(query, [username, password], (error, result) => {
+        console.log("Hasil Database:", result);
+        if (error) return response(500, null, "Server Error", res);
 
-        if (err) {
-            return response(500, null, "Error during login", res);
+        if (result.length > 0) {
+            const user = result[0];
+
+            // Data yang akan dimasukkan ke dalam token (Payload)
+            const payload = {
+                id: user.id,
+                username: user.name,
+                role: user.id_posisi
+            };
+
+            // Membuat Token (Expired dalam 1 hari)
+            const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
+
+            // Kirim token dan data user ke frontend
+            res.json({
+                status: 200,
+                message: "Login Berhasil",
+                token: token,
+                user: {
+                    id: user.id_account,
+                    name: user.name,
+                    id_posisi: user.id_posisi
+                }
+            });
+        } else {
+            // Jika user tidak ditemukan
+            res.status(401).json({ status: 401, message: "Username atau Password Salah" });
         }
-        if (result.length === 0) {
-            return response(401, null, "Invalid Credentials", res);
-        }
+    });
+});
 
-        const user = result[0];
-        const token = jwt.sign({ id: user.id, username: user.name }, 'GBLK', { expiresIn: 30 })
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Mengambil token dari format "Bearer TOKEN"
 
-        response(200, { token, user: { id: user.id, username: user.name } }, "Login Success", res)
+    if (!token) return res.status(401).json({ message: "Akses ditolak, token hilang!" });
 
-    })
-})
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) return res.status(403).json({ message: "Token tidak valid atau kadaluwarsa" });
+        
+        req.user = decoded; // Menyimpan data user dari token ke dalam request
+        next(); // Lanjut ke fungsi berikutnya
+    });
+};
 
-routes.get('/api_users', (req, res) => {
+routes.get('/api_users', verifyToken, (req, res) => {
     db.query("SELECT * FROM tbl_user", (error, result) => {
-        response(200, result, "GET ALL tabel users", res)
-    })
-})
+        response(200, result, "GET ALL tabel users (Protected)", res);
+    });
+});
+
+// routes.get('/api_users', (req, res) => {
+//     db.query("SELECT * FROM tbl_user", (error, result) => {
+//         response(200, result, "GET ALL tabel users", res)
+//     })
+// })
 
 routes.get('/api_siswa', (req, res) => {
     // response(200, result, "GET ALL tabel siswa", res)
