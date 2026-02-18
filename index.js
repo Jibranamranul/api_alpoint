@@ -52,6 +52,7 @@ app.get("/api_rewardByUID", routes);
 
 app.get("/totalScorePelanggaaranSiswa", routes);
 app.get("/totalScoreRewardSiswa", routes);
+app.get("/totalScoreSiswa", routes);
 
 
 

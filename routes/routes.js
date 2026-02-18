@@ -281,4 +281,39 @@ routes.get("/totalScoreRewardSiswa", (req, res) => {
     })
 })
 
+routes.get("/totalScoreSiswa", (req, res) => {
+    const sql = `SELECT 
+    s.id,
+    s.nis,
+    s.nama,
+    (SELECT IFNULL(SUM(kp.score), 0) 
+     FROM tbl_pelanggaran p 
+     JOIN tbl_ket_pelanggaran kp ON p.id_pelanggaran = kp.id 
+     WHERE p.id_name = s.id
+    ) AS total_pelanggaran,
+    (SELECT IFNULL(SUM(kr.score), 0) 
+     FROM tbl_reward r 
+     JOIN tbl_ket_reward kr ON r.id_reward = kr.id 
+     WHERE r.id_name = s.id
+    ) AS total_reward,
+    ((SELECT IFNULL(SUM(kr.score), 0) 
+      FROM tbl_reward r 
+      JOIN tbl_ket_reward kr ON r.id_reward = kr.id 
+      WHERE r.id_name = s.id) 
+     - 
+     (SELECT IFNULL(SUM(kp.score), 0) 
+      FROM tbl_pelanggaran p 
+      JOIN tbl_ket_pelanggaran kp ON p.id_pelanggaran = kp.id 
+      WHERE p.id_name = s.id
+    )) AS skor_akhir
+    FROM tbl_siswa s
+    ORDER BY skor_akhir DESC;`
+    db.query(sql, (err, result) => {
+        if (err) console.log(err);
+
+        response(200, result, "GET ALL SISWA SCORE", res);
+
+    })
+})
+
 module.exports = routes;
