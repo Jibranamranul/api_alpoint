@@ -9,7 +9,7 @@ const SECRET_KEY = "kode_rahasia_pesantren_123";
 
 
 routes.post("/register", (req, res) => {
-    const {name, id_posisi, id_account,password} = req.body;
+    const { name, id_posisi, id_account, password } = req.body;
     sql = "INSERT INTO tbl_user (name, id_posisi, id_account ,password) VALUES (?,?,?,?)"
     db.query(sql, [name, id_posisi, id_account, password], (err, result) => {
         response(200, result, "User berhasil di tambahkan", res)
@@ -23,7 +23,7 @@ routes.post('/login', (req, res) => {
 
     // Cari user berdasarkan username dan password
     const query = "SELECT * FROM tbl_user WHERE name = ? AND password = ?";
-    
+
     db.query(query, [username, password], (error, result) => {
         console.log("Hasil Database:", result);
         if (error) return response(500, null, "Server Error", res);
@@ -67,23 +67,23 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) return res.status(403).json({ message: "Token tidak valid atau kadaluwarsa" });
-        
+
         req.user = decoded; // Menyimpan data user dari token ke dalam request
         next(); // Lanjut ke fungsi berikutnya
     });
 };
 
-routes.get('/api_users', verifyToken, (req, res) => {
-    db.query("SELECT * FROM tbl_user", (error, result) => {
-        response(200, result, "GET ALL tabel users (Protected)", res);
-    });
-});
-
-// routes.get('/api_users', (req, res) => {
+// routes.get('/api_users', verifyToken, (req, res) => {
 //     db.query("SELECT * FROM tbl_user", (error, result) => {
-//         response(200, result, "GET ALL tabel users", res)
-//     })
-// })
+//         response(200, result, "GET ALL tabel users (Protected)", res);
+//     });
+// });
+
+routes.get('/api_users', (req, res) => {
+    db.query("SELECT * FROM tbl_user", (error, result) => {
+        response(200, result, "GET ALL tabel users", res)
+    })
+})
 
 routes.get('/api_siswa', (req, res) => {
     // response(200, result, "GET ALL tabel siswa", res)
@@ -129,16 +129,44 @@ routes.get("/api_selectPelanggaranBySiswa", (req, res) => {
     JOIN tbl_siswa s ON p.id_name = s.id;`
 
     db.query(sql, (err, result) => {
-        response(200, result, "GET tabel reward by id siswa", res)
+        response(200, result, "GET ALL tabel pelanggaran siswa", res)
     })
 })
 
+routes.get("/api_pelanggaranByUID", (req, res) => {
+    const { uid } = req.body;
+    const sql = `SELECT p.id, s.id as id_name, kep.name as pelanggaran, kep.score, kap.kategori, p.date
+    FROM tbl_pelanggaran p
+    JOIN tbl_ket_pelanggaran kep ON p.id_pelanggaran = kep.id
+    JOIN tbl_kategori_pelanggaran kap ON kep.kategori = kap.id
+    JOIN tbl_siswa s ON p.id_name = s.id
+    WHERE id_name = ?;`
+
+    db.query(sql, [uid], (err, result) => {
+        response(200, result, "GET Tabel Pelanggaran by id siswa", res);
+    })
+})
+
+routes.get("/api_rewardByUID", (req, res) => {
+    const { uid } = req.query;
+    sql = `SELECT r.id, s.nama, kr.name, kr.score
+    FROM tbl_reward r
+    JOIN tbl_siswa s ON r.id_name = s.id
+    JOIN tbl_ket_reward kr ON r.id_reward = kr.id
+    WHERE id_name = ?`
+
+    db.query(sql, [uid], (err, result) => {
+        response(200, result, "GET  Tabel Reward by id siswa", res);
+    })
+})
 
 routes.get('/api_kategori_pelanggaran', (req, res) => {
     db.query("SELECT * FROM tbl_kategori_pelanggaran", (error, result) => {
         response(200, result, "GET ALL tabel kategori_pelanggaran", res)
     })
 })
+
+
 routes.get('/api_ket_pelanggaran', (req, res) => {
     // const sql = `SELECT ket.id, ket.name, ket.score, kat.kategori
     // FROM tbl_ket_pelanggaran ket
@@ -197,7 +225,8 @@ routes.get('/api_pelanggaran', (req, res) => {
     //     response(200, result, "GET ALL tabel pelanggaran", res)
     // })
     sql = `SELECT p.id, s.nama, kp.name AS pelanggaran, p.date 
-        FROM tbl_pelanggaran p`
+        FROM tbl_pelanggaran p
+        JOIN tbl_siswa s ON`
     db.query("SELECT * FROM tbl_pelanggaran", (error, result) => {
         response(200, result, "GET ALL tabel pelanggaran", res)
     })
@@ -225,6 +254,31 @@ routes.put('/api_pelanggaran', (req, res) => {
         console.log(result)
     })
     response(200, "test", "test", res)
+})
+routes.get("/totalScorePelanggaaranSiswa", (req, res) => {
+    const sql = `SELECT s.id AS id_siswa, s.nama AS nama_siswa, SUM(kep.score) AS total_skor_pelanggaran
+    FROM tbl_pelanggaran p
+    JOIN tbl_ket_pelanggaran kep ON p.id_pelanggaran = kep.id
+    JOIN tbl_siswa s ON p.id_name = s.id
+    GROUP BY s.id;`
+
+    db.query(sql, (err, result) => {
+        response(200, result, "TESTING", res);
+    })
+})
+
+routes.get("/totalScoreRewardSiswa", (req, res) => {
+    const sql = `SELECT s.id AS id, s.nama AS nama,s.kelas AS kelas, s.nis AS nis, SUM(ker.score) AS total_skor_reward
+    FROM tbl_reward r
+    JOIN tbl_ket_reward ker ON r.id_reward = ker.id
+    JOIN tbl_siswa s ON r.id_name = s.id
+    GROUP BY s.id
+    ORDER BY total_skor_reward DESC
+    `
+
+    db.query(sql, (err, result) => {
+        response(200, result, "TESTING", res);
+    })
 })
 
 module.exports = routes;

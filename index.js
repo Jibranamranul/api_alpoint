@@ -47,6 +47,11 @@ app.put("/api_reward", routes)
 app.delete("/api_reward", routes)
 
 
+app.get("/api_pelanggaranByUID", routes);
+app.get("/api_rewardByUID", routes);
+
+app.get("/totalScorePelanggaaranSiswa", routes);
+app.get("/totalScoreRewardSiswa", routes);
 
 
 
